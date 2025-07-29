@@ -8,14 +8,10 @@ import java.util.*;
 
 public class TeacherDAO {
 
-	private Connection connection;
+	private final Connection connection;
 
-	public TeacherDAO() {
-		try {
-			this.connection = DBConnection.connect(); // use connect()
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+	public TeacherDAO() throws SQLException {
+		this.connection = DBConnection.connect();
 	}
 
 	public boolean addTeacher(Teacher teacher) {
@@ -32,27 +28,66 @@ public class TeacherDAO {
 	}
 
 	public List<Teacher> getAllTeachers() {
-		List<Teacher> teachers = new ArrayList<>();
+		List<Teacher> list = new ArrayList<>();
 		String sql = "SELECT * FROM teachers WHERE is_active = TRUE";
 		try (Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
 			while (rs.next()) {
-				teachers.add(new Teacher(rs.getInt("teacher_id"), rs.getString("name"), rs.getString("qualification"),
+				list.add(new Teacher(rs.getInt("teacher_id"), rs.getString("name"), rs.getString("qualification"),
 						rs.getDouble("experience")));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return teachers;
+		return list;
 	}
 
-	public boolean softDeleteTeacher(int teacherId) {
+	public boolean softDeleteTeacher(int id) {
 		String sql = "UPDATE teachers SET is_active = FALSE WHERE teacher_id = ?";
 		try (PreparedStatement ps = connection.prepareStatement(sql)) {
-			ps.setInt(1, teacherId);
+			ps.setInt(1, id);
 			return ps.executeUpdate() > 0;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return false;
 		}
+	}
+
+	public boolean assignSubject(int teacherId, int subjectId) {
+		String sql = "INSERT INTO subject_teachers (subject_id, teacher_id) VALUES (?, ?)";
+		try (PreparedStatement ps = connection.prepareStatement(sql)) {
+			ps.setInt(1, subjectId);
+			ps.setInt(2, teacherId);
+			return ps.executeUpdate() > 0;
+		} catch (SQLException e) {
+			System.out.println("⚠ Subject might already be assigned.");
+			return false;
+		}
+	}
+
+	public boolean removeSubject(int teacherId, int subjectId) {
+		String sql = "DELETE FROM subject_teachers WHERE teacher_id = ? AND subject_id = ?";
+		try (PreparedStatement ps = connection.prepareStatement(sql)) {
+			ps.setInt(1, teacherId);
+			ps.setInt(2, subjectId);
+			return ps.executeUpdate() > 0;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	public List<String> getAssignedSubjects(int teacherId) {
+		List<String> subjects = new ArrayList<>();
+		String sql = "SELECT s.subject_name FROM subjects s JOIN subject_teachers st ON s.subject_id = st.subject_id WHERE st.teacher_id = ?";
+		try (PreparedStatement ps = connection.prepareStatement(sql)) {
+			ps.setInt(1, teacherId);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				subjects.add(rs.getString("subject_name"));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return subjects;
 	}
 }

@@ -9,6 +9,12 @@ public class Teacher {
 	public Teacher() {
 	}
 
+	public Teacher(String name, String qualification, double experience) {
+		this.name = name;
+		this.qualification = qualification;
+		this.experience = experience;
+	}
+
 	public Teacher(int teacherId, String name, String qualification, double experience) {
 		this.teacherId = teacherId;
 		this.name = name;
@@ -16,13 +22,6 @@ public class Teacher {
 		this.experience = experience;
 	}
 
-	public Teacher(String name, String qualification, double experience) {
-		this.name = name;
-		this.qualification = qualification;
-		this.experience = experience;
-	}
-
-	// Getters and setters
 	public int getTeacherId() {
 		return teacherId;
 	}
@@ -35,29 +34,17 @@ public class Teacher {
 		return name;
 	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
-
 	public String getQualification() {
 		return qualification;
-	}
-
-	public void setQualification(String qualification) {
-		this.qualification = qualification;
 	}
 
 	public double getExperience() {
 		return experience;
 	}
 
-	public void setExperience(double experience) {
-		this.experience = experience;
-	}
-
 	@Override
 	public String toString() {
-		return "ID: " + teacherId + ", Name: " + name + ", Qualification: " + qualification + ", Experience: "
-				+ experience;
+		// Tabular formatting
+		return String.format("%-10d %-20s %-20s %-10.1f", teacherId, name, qualification, experience);
 	}
 }
