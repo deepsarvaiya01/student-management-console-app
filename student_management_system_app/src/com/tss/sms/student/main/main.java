@@ -1,0 +1,56 @@
+package com.tss.sms.student.main;
+
+import java.util.Scanner;
+
+import com.tss.sms.student.controller.StudentController;
+
+public class main {
+
+    public static void main(String[] args) {
+        StudentController controller = new StudentController();
+        Scanner scanner = new Scanner(System.in);
+        char choice;
+
+        while (true) {
+            System.out.println("\n====== Student Management Menu ======");
+            System.out.println("a. View All Students");
+            System.out.println("b. Add New Student");
+            System.out.println("c. Assign A Course");
+            System.out.println("d. View All Courses");
+            System.out.println("e. Search A Student");
+            System.out.println("f. Delete A Student");
+            System.out.println("g. Exit");
+            System.out.print("Enter your choice: ");
+
+            choice = scanner.next().toLowerCase().charAt(0);
+
+            switch (choice) {
+                case 'a':
+                    controller.viewAllStudents();
+                    break;
+                case 'b':
+                    controller.addNewStudent();
+                    break;
+                case 'c':
+                    controller.assignCourse();
+                    break;
+                case 'd':
+                    controller.viewAllCourses();
+                    break;
+                case 'e':
+                    controller.searchStudent();
+                    break;
+                case 'f':
+                    controller.deleteStudent();
+                    break;
+                case 'g':
+                    System.out.println("Exiting... Thank you!");
+                    scanner.close();
+                    System.exit(0);
+                    break;
+                default:
+                    System.out.println("Invalid choice! Please enter a letter between a and g.");
+            }
+        }
+    }
+}
